@@ -2,9 +2,7 @@ package com.Talessa.Client_Servidor;
 
 import com.Talessa.Joc.Jugada;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -15,12 +13,12 @@ import java.util.Map;
 public class DatagramSocketServer {
 
     DatagramSocket socket;
-    boolean fin = false;
-    int jugador = 0;
-    int[] jugadores = {1,2};
-    Map<Integer,Integer[]> jugador1 = new HashMap<>();
-    Map<Integer,Integer[]> jugador2 = new HashMap<>();
-    int[] barcosT = {0,0};
+    boolean fin = false; // true si gana algun jugdor
+    int jugadores = 0; //controla la cantidad de jugadores posibles
+    int jugador = 1; // controla el turno del jugador que le toca
+    Map<Integer[],Integer> jugador1 = new HashMap<>(); // map con las posiciones de los barcos y su estado del j1
+    Map<Integer[],Integer> jugador2 = new HashMap<>(); // map con las posiciones de los barcos y su estado del j2
+    int[] barcosT = {0,0}; // cantidad de barcos hundidos del j1 y j2
     Jugada jugada=null;
 
 
@@ -55,32 +53,122 @@ public class DatagramSocketServer {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             jugada=(Jugada) objectInputStream.readObject();
-            if (jugada.getJugador() == 0){
-                nuevoJugador();
-            }
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
+        if (jugadores <2){
+            if (jugada.getJugador() == 0){
+                nuevoJugador();
+            }else {
+                estadoesperar();
+            }
+        }else{
+            if (jugada.getJugador()== jugador){
+                procesarjugada();
+            }else if (jugada.getJugador() == 0){
+                servidorlleno();
+            }
+            else {
+                estadoesperarturno();
+            }
+        }
 
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ObjectOutputStream oos = null;
+        try {
+            oos = new ObjectOutputStream(os);
+            oos.writeObject(jugada);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] respuesta = os.toByteArray();
+        return respuesta;
+    }
 
-        return data;
+    private void servidorlleno() {
+        jugada.setEstado(4);
+    }
+
+    private void estadoesperarturno() {
+        jugada.setEstado(jugador);
+        jugada.setResultado(0);
+    }
+
+    private void procesarjugada() {
+
+        if (jugada.getJugador()==1){
+            if (jugador2.containsKey(jugada.getJugada())) {
+                for (Map.Entry<Integer[], Integer> entry : jugador2.entrySet()) {
+                    if (jugada.getJugada() == entry.getKey()) {
+                        if (entry.getValue() == 0) {
+                            entry.setValue(1);
+                            jugada.setResultado(2);
+                            barcosT[0]++;
+                        } else {
+                            jugada.setResultado(2);
+                        }
+                    }
+                }
+                if (barcosT[0] == jugada.getTotalbarcos()) {
+                    jugada.setEstado(3);
+                    jugada.setResultado(3);
+                    fin = true;
+                }
+            }else {
+                jugada.setResultado(1);
+            }
+            jugador = 2;
+            jugada.setEstado(jugador);
+        }else if (jugada.getJugador()==2){
+            if (jugador1.containsKey(jugada.getJugada())) {
+                for (Map.Entry<Integer[], Integer> entry : jugador1.entrySet()) {
+                    if (jugada.getJugada() == entry.getKey()) {
+                        if (entry.getValue() == 0) {
+                            entry.setValue(1);
+                            jugada.setResultado(2);
+                            barcosT[1]++;
+                        } else {
+                            jugada.setResultado(2);
+                        }
+                    }
+                }
+                if (barcosT[1] == jugada.getTotalbarcos()) {
+                    jugada.setEstado(3);
+                    jugada.setResultado(4);
+                    fin = true;
+                }
+            }else {
+                jugada.setResultado(1);
+            }
+            jugador = 1;
+            jugada.setEstado(jugador);
+        }
+    }
+
+    private void estadoesperar() {
+        jugada.setEstado(0);
+        jugada.setResultado(0);
     }
 
     private void nuevoJugador() {
-        if (jugador <=2){
-            jugador++;
-            if (jugador==1){
+        if (jugadores <2){
+            jugadores++;
+            if (jugadores==1){
                 jugador1=jugada.getBarcos();
                 jugada.setEstado(0);
                 jugada.setResultado(0);
+                jugada.setJugador(1);
             }
-            if (jugador==2){
+            if (jugadores==2){
                 jugador2=jugada.getBarcos();
                 jugada.setEstado(0);
                 jugada.setResultado(0);
+                jugada.setJugador(2);
             }
+        }else{
+            jugada.setEstado(4);
         }
     }
 }

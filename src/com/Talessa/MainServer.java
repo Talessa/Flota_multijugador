@@ -19,5 +19,6 @@ public class MainServer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.exit(0);
     }
 }

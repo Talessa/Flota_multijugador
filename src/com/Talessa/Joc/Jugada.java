@@ -5,12 +5,29 @@ import java.util.Map;
 
 public class Jugada {
     int jugador;
+    //0-jugador nuevo
+    //1-hygador 1
+    //2-jugador 2
     int estado;
+    //0-espera
+    //1-turno jugador 1
+    //2-turno jugador 2
+    //3-Fin partida
+    //4-Servidor lleno
     int resultado;
-    Map<Integer,Integer[]> barcos = new HashMap<>();
-    int [] jugada = new int[2];
+    //0-espera
+    //1-agua
+    //2-barco
+    //3-gana jugador 1
+    //4-gana jugador 2
+    Map<Integer[],Integer> barcos = new HashMap<>();
+    //map con los barcos del tablero
+    Integer [] jugada = new Integer[2];
+    // array con la jugada introducida por el usuario,
 
-    public Jugada(Map<Integer, Integer[]> barcos) {
+    int totalbarcos=5;
+
+    public Jugada(Map<Integer[], Integer> barcos) {
         this.jugador = 0;
         this.estado = 0;
         this.resultado = 0;
@@ -43,19 +60,19 @@ public class Jugada {
         this.resultado = resultado;
     }
 
-    public Map<Integer, Integer[]> getBarcos() {
+    public Map<Integer[], Integer> getBarcos() {
         return barcos;
     }
 
-    public void setBarcos(Map<Integer, Integer[]> barcos) {
+    public void setBarcos(Map<Integer[], Integer> barcos) {
         this.barcos = barcos;
     }
 
-    public int[] getJugada() {
+    public Integer[] getJugada() {
         return jugada;
     }
 
-    public void setJugada(int[] jugada) {
+    public void setJugada(Integer[] jugada) {
         this.jugada = jugada;
     }
 
@@ -67,4 +84,11 @@ public class Jugada {
         this.jugada[1]=jugada1;
     }
 
+    public int getTotalbarcos() {
+        return totalbarcos;
+    }
+
+    public void setTotalbarcos(int totalbarcos) {
+        this.totalbarcos = totalbarcos;
+    }
 }
