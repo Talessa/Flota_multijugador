@@ -21,8 +21,8 @@ public class DatagramSocketClient {
     Jugada jugada=null;
 
     public void init(String host,int port) throws UnknownHostException, SocketException {
-        ipservidor=InetAddress.getByName(host);
-        puertoservior=port;
+        ipservidor=InetAddress.getByName("localhost");
+        puertoservior=5555;
         socket = new DatagramSocket();
         tablero.iniciarTablero();
         tablero.colBarcos();
@@ -33,7 +33,7 @@ public class DatagramSocketClient {
     }
 
     public void runClient() throws IOException {
-        byte[] datosE = new byte[12];
+        byte[] datosE = new byte[1024];
         byte[] datosS;
 
         datosS= getFirstRequest();
@@ -41,7 +41,7 @@ public class DatagramSocketClient {
         while (!fin){
             DatagramPacket packet = new DatagramPacket(datosS,datosS.length,ipservidor,puertoservior);
             socket.send(packet);
-            packet=new DatagramPacket(datosE,12);
+            packet=new DatagramPacket(datosE,1024);
             socket.receive(packet);
             if (primero){
                 datosS=getFristDataToRequest(packet.getData(),packet.getLength());
@@ -92,9 +92,9 @@ public class DatagramSocketClient {
         try {
             ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
             jugada=(Jugada) objectInputStream.readObject();
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         //compruebo que codigo de estado me a enviado el servidor.
@@ -107,9 +107,10 @@ public class DatagramSocketClient {
             case 3:
                 ganar();
                 break;
-            
+
             default:
-                procesarjugada();    
+                procesarjugada();
+                break;
         }
 
 

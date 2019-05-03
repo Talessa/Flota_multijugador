@@ -1,9 +1,10 @@
 package com.Talessa.Joc;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Jugada {
+public class Jugada implements Serializable {
     int jugador;
     //0-jugador nuevo
     //1-hygador 1
@@ -20,14 +21,14 @@ public class Jugada {
     //2-barco
     //3-gana jugador 1
     //4-gana jugador 2
-    Map<Integer[],Integer> barcos = new HashMap<>();
+    Map<String,Integer> barcos;
     //map con los barcos del tablero
     Integer [] jugada = new Integer[2];
     // array con la jugada introducida por el usuario,
 
     int totalbarcos=5;
 
-    public Jugada(Map<Integer[], Integer> barcos) {
+    public Jugada(Map<String, Integer> barcos) {
         this.jugador = 0;
         this.estado = 0;
         this.resultado = 0;
@@ -60,11 +61,11 @@ public class Jugada {
         this.resultado = resultado;
     }
 
-    public Map<Integer[], Integer> getBarcos() {
+    public Map<String, Integer> getBarcos() {
         return barcos;
     }
 
-    public void setBarcos(Map<Integer[], Integer> barcos) {
+    public void setBarcos(Map<String, Integer> barcos) {
         this.barcos = barcos;
     }
 
