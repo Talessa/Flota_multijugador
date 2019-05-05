@@ -1,14 +1,13 @@
 package com.Talessa;
 
 import com.Talessa.Client_Servidor.DatagramSocketClient;
-import com.Talessa.Joc.Tablero;
 
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class Main {
+public class Main2 {
 
     public static void main(String[] args) {
         iniciarcliente("localhost",5555);

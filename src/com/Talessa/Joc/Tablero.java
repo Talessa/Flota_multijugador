@@ -21,12 +21,12 @@ public class Tablero {
     int barcou=2;
     int agua=1;
     int barcos=5;
-    Map<Integer[],Integer> barcosMap = new HashMap<>();
+    Map<String,Integer> barcosMap = new HashMap<>();
 
     String bordes = "|";
 
     public Tablero() {
-        this.tablero = new int[11][11];
+        this.tablero = new int[6][6];
 
     }
 
@@ -45,7 +45,7 @@ public class Tablero {
             int y = random.nextInt(tablero.length);
             if (tablero[x][y] != barco){
                 tablero[x][y]=barco;
-                Integer[] pos ={x,y};
+                String pos =""+x+y;
                 barcosMap.put(pos,0);
             }else {
                 i--;
@@ -56,7 +56,7 @@ public class Tablero {
     public boolean colBarcos(int x,int y){
         if (tablero[x][y]!=barco){
             tablero[x][y]=barco;
-            Integer[] pos ={x,y};
+            String pos =""+x+y;
             barcosMap.put(pos,0);
             return true;
         }else {
@@ -103,10 +103,12 @@ public class Tablero {
     }
 
     public void procesarJugada(Integer[] jugada,int resultado){
-        tablero[jugada[0]][jugada[1]] =  resultado;
+        if (jugada[0] != 99 && jugada[1] != 99){
+            tablero[jugada[0]][jugada[1]] =  resultado;
+        }
     }
 
-    public Map<Integer[], Integer> getBarcosMap() {
+    public Map<String, Integer> getBarcosMap() {
         return barcosMap;
     }
 
